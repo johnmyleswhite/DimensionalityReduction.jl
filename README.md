@@ -5,7 +5,6 @@ DimensionalityReduction.jl
 
 * Principal Component Analysis (PCA)
 * Independant Component Analysis (ICA)
-* Non-negative Matrix Factorization (NMF)
 * t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
 # PCA Usage
@@ -14,6 +13,9 @@ DimensionalityReduction.jl
 
     X = reshape(rand(40),10,4)
     Xpca = pca(X)
+
+Rows of `X` each represent a data point (i.e., a different repetition of the experiment),
+and columns of `X` represent the different variables measured.
 
 Attributes:
 
@@ -25,6 +27,10 @@ Attributes:
 
 By default, pca() uses SVD decomposition. Alternatively, `pcaeig(X)` will calculate
 directly the eigenvectors of the covariance matrix.
+
+Before computing the SVD, pca() centers and scales your data: specifically, the mean is subtracted,
+and then each variable is normalized by its standard deviation. You can turn off these
+transformations using keywords `center=false` and `scale=false`, respectively.
 
 To make a biplot:
 
@@ -55,14 +61,6 @@ Starting from a DataFrame:
 
     results = ica(X)
 
-# NMF Usage
-
-    using DimensionalityReduction
-
-    X = hcat(eye(2), eye(2))
-    X = vcat(X, X, X, X)
-    results = nmf(X, 2)
-
 # t-SNE Usage
 
     using DimensionalityReduction
@@ -70,3 +68,7 @@ Starting from a DataFrame:
     X = hcat(eye(2), eye(2))
     X = vcat(X, X, X, X)
     results = tsne(X, 2)
+
+# NMF
+
+NMF has been moved into a separate [package](https://github.com/JuliaStats/NMF.jl).
