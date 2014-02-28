@@ -7,6 +7,8 @@ DimensionalityReduction.jl
 * Independant Component Analysis (ICA)
 * Non-negative Matrix Factorization (NMF)
 * t-Distributed Stochastic Neighbor Embedding (t-SNE)
+* Isomap 
+* Diffusion maps
 
 # PCA Usage
 

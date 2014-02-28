@@ -24,6 +24,23 @@ type TSNE
     Y::Matrix{Float64}
 end
 
+type Isomap
+    d::Int
+    k::Int
+    l::Vector
+    P::Matrix
+    cc::Vector
+    Y::Matrix
+    L::Matrix
+end
+
+type Diffmap
+    d::Int
+    t::Int
+    K::Matrix
+    Y::Matrix
+end
+
 function Base.show(io::IO, pc::PCA)
     println(io, "Rotation:")
     show(io, pc.rotation)
@@ -79,3 +96,41 @@ function Base.show(io::IO, res::TSNE)
     @printf "t-SNE results\n"
     show(io, res.Y)
 end
+
+function Base.show(io::IO, res::Isomap)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "NNs:")
+    show(io, res.k)
+    print(io, "\n\n")
+    println(io, "Eigenvalues:")
+    show(io, res.l)
+    print(io, "\n\n")
+    println(io, "Eigenvectors:")
+    show(io, res.P)
+    print(io, "\n\n")
+    println(io, "Connected component:")
+    show(io, res.cc)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+    print(io, "\n\n")
+    println(io, "Laplacian:")
+    show(io, res.L)
+end
+
+function Base.show(io::IO, res::Diffmap)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "Timesteps:")
+    show(io, res.t)
+    print(io, "\n\n")
+    println(io, "Kernel:")
+    show(io, res.K)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
