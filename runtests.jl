@@ -2,7 +2,8 @@ using DimensionalityReduction
 
 my_tests = ["test/pca.jl",
             "test/ica.jl",
-            "test/isomap.jl"]
+            "test/isomap.jl",
+            "test/laplacian_eigenmaps.jl"]
 
 println("Running tests:")
 

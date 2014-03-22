@@ -41,6 +41,13 @@ type Diffmap
     Y::Matrix
 end
 
+type Eigenmap
+    d::Int
+    k::Int
+    L::Vector
+    Y::Matrix
+end
+
 function Base.show(io::IO, pc::PCA)
     println(io, "Rotation:")
     show(io, pc.rotation)
@@ -129,6 +136,20 @@ function Base.show(io::IO, res::Diffmap)
     print(io, "\n\n")
     println(io, "Kernel:")
     show(io, res.K)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
+function Base.show(io::IO, res::Eigenmap)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "NNs:")
+    show(io, res.k)
+    print(io, "\n\n")
+    println(io, "Eigenvalues:")
+    show(io, res.L)
     print(io, "\n\n")
     println(io, "Embedding:")
     show(io, res.Y)
