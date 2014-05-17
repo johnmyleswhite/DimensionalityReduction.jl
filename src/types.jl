@@ -48,7 +48,7 @@ end
 type Eigenmap
     d::Int
     k::Int
-    t::Float64
+    σ::Float64
     cc::Vector{Int}
     λ::Vector{Float64}
     Y::Matrix{Float64}
@@ -153,8 +153,8 @@ function Base.show(io::IO, res::Eigenmap)
     println(io, "NNs:")
     show(io, res.k)
     print(io, "\n\n")
-    println(io, "t:")
-    show(io, res.t)
+    println(io, "σ:")
+    show(io, res.σ)
     print(io, "\n\n")
     println(io, "Eigenvalues:")
     show(io, res.λ)
