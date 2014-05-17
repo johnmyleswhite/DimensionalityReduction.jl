@@ -13,4 +13,7 @@ CC = DimensionalityReduction.components(E)
 @assert length(CC) > 0
 
 # test shortest path
-#P, PD = dijkstra(D, E, 1)
+D = [7 9 14; 7 10 15; 9 10 2; 15 6 0; 6 9 11; 14 2 9]'
+E = [2 3 6; 1 3 4; 1 2 6; 2 5 4; 3 4 6; 1 3 5]'
+P, PD = dijkstra(D, E, 1)
+@assert PD[5] == 20. && PD[6] == 11.
