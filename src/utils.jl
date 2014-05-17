@@ -1,4 +1,4 @@
-using Graphs
+using Base.Collections
 
 # Generate all combinations of "n" elements from a given iterable object
 function combn(v::Vector, n::Int)
@@ -9,61 +9,162 @@ function combn(v::Vector, n::Int)
     v[IND]
 end
 
-# Creates incidence graph and list distances corresponding to graph egdes
-function find_nn(X::Matrix, k::Int=12)
-    rows = size(X,1)
-    #dists = spzeros(rows, rows)
-    dists = zeros(0)
-    g = simple_inclist(rows, is_directed=false)
-    for i=1:rows
-        e = out_edges(i, g)
-        D = vec(sqrt(sum((X.-X[i,:]).^2,2)))
-        knn = sortperm(D)[2:k+1]
-        for j=1:k
-            v = knn[j]
-            if length(filter(x -> target(x)==v, e)) == 0
-                add_edge!(g, v, i)
-                #dists[i, v] = dists[v, i] =D[v]
-                push!(dists, D[v])
-            end
+# Generate k-nearest neighborhood graph with distances
+function find_nn{T}(X::AbstractMatrix{T}, k::Int=12)    
+    m, n = size(X)
+    r = Array(T, (n, n))
+    d = Array(T, k, n)
+    e = Array(Int, k, n)
+
+    At_mul_B!(r, X, X)    
+    sa2 = sum(X.^2, 1)
+    
+    for j = 1 : n
+        for i = 1 : j-1
+            @inbounds r[i,j] = r[j,i]
         end
+        @inbounds r[j,j] = 0
+        for i = j+1 : n
+            @inbounds v = sa2[i] + sa2[j] - 2 * r[i,j]
+            @inbounds r[i,j] = isnan(v) ? NaN : sqrt(max(v, 0.))
+        end
+        e[:, j] = sortperm(r[:,j])[2:k+1]
+        d[:, j] = r[e[:, j],j]
     end
-    g, dists
+    
+    return (d, e)
 end
 
-# Get largets connected component from graph as well as corrsponding disances
-function find_largest_cc(G::GenericIncidenceList, D::Vector)
-    ccs = connected_components(G)
-    cc_idx = sortperm(map(size, ccs), rev=true)[1]
-    cc = ccs[cc_idx]
-    n = length(cc)
-    if n == 1
-        CCG = G
-        dists = D
-    else
-        cc_idx = Dict(cc,1:n)
-        dists = Float64[]
-        CCG = simple_inclist(n, is_directed=false)
-        for i=1:n
-            eg = out_edges(cc[i], G)
-            e = out_edges(i, CCG)
-            for j=1:length(eg)
-                s = source(eg[j])
-                t = target(eg[j])
-                if length(filter(x->target(x)==cc_idx[t], e)) == 0
-                    add_edge!(CCG, cc_idx[t], cc_idx[s])
-                    push!(dists, D[eg[j].index])
-                end
+# find connected components for undirected graph
+function components(E::AbstractMatrix{Int})
+    m, n = size(E)
+    cmap = zeros(Int, n)
+    cc = Array(Vector{Int}, 0)
+    queue = Int[]
+
+    for v in 1 : n
+        if cmap[v] == 0            
+            # Start BFS with coloring
+            c = Int[]
+            push!(queue, v)            
+            while !isempty(queue)
+                w = shift!(queue)
+                for k in E[:, w]
+                    if cmap[k] == 0
+                        cmap[k] = 1
+                        push!(queue, k)
+                    end
+                end                
+                cmap[w] = 2
+                push!(c, w)
             end
+            # Save component            
+            push!(cc, c)
         end
     end
-    CCG, dists, cc
+
+    return cc
+end
+
+# Dijkstra's algorithm for single-source shortest path
+function dijkstra{T}(D::AbstractMatrix{T}, E::AbstractMatrix{Int}, src)
+    m, n = size(D)
+    path = zeros(Int, n)
+    dist = fill(Inf, n)
+    dist[src] = 0
+
+    q = PriorityQueue(1:n, dist)
+    while !isempty(q)
+        u = dequeue!(q)
+        for i in 1:m
+            v = E[i,u]
+            alt = dist[u] + D[i,u]
+            if haskey(q, v) && alt < q[v]
+                dist[v] = q[v] = alt
+                path[v] = u
+            end
+        end        
+    end
+
+    return (path, dist)
+end
+
+# find strongly connected components for directed graph
+function scomponents(E::AbstractMatrix{Int})
+    
+    function tarjan(v::Int)
+        global E, I, index, lowlink, stack, components
+        index[v] = I
+        lowlink[v] = I
+        I += 1
+        push!(stack, v)
+
+        for w in E[:,v]
+            if index[w] == -1
+                tarjan(w)
+                lowlink[v] = min(lowlink[v], lowlink[w])
+            elseif w in stack
+                lowlink[v] = min(lowlink[v], lowlink[w])
+            end
+        end
+
+        if lowlink[v] == index[v]
+            component = Int[]
+            while true
+                w = pop!(stack)
+                push!(component, w)
+                if w == v                    
+                    break
+                end
+            end
+            push!(components, component)          
+        end
+    end
+
+    m, n = size(E)
+    I = 0
+    index = fill(-1, n)
+    lowlink = fill(-1, n)
+    stack = Int[]
+    components = Array{Int,1}[]
+
+    for v = 1 : n
+        if index[v] == -1
+            tarjan(v)
+        end
+    end
+
+    return components
+end
+
+function minmax_normalization(X::Matrix)
+    X .-= minimum(X)
+    X ./ maximum(X)
 end
 
 # Swiss roll dataset
 function swiss_roll(n::Int = 1000, noise::Float64=0.05)
-    t = (3 * pi / 2) * (1 + 2 * rand(n, 1))
+    t = (3 * pi / 2) * (1 .+ 2 * rand(n, 1))
     height = 30 * rand(n, 1)
-    X = [t .* cos(t) height t .* sin(t)] + noise * randn(n, 3)   
-    return X
+    X = [t .* cos(t) height t .* sin(t)] + noise * randn(n, 3)  
+    labels = vec(int(rem(sum([round(t / 2) round(height / 12)], 2), 2))) 
+    return X', labels
+end
+
+# Deprecated
+function find_nn_{T}(X::AbstractMatrix{T}, k::Int=12)
+    n, m = size(X)    
+    dist = Array(T, n, k)
+    edge = Array(Int, n, k)
+    
+    for i = 1 : n
+        D = vec(sum((X.-X[i,:]).^2,2))
+        knn = sortperm(D)[2:k+1]
+        for j = 1 : k
+            edge[i, j] = knn[j]
+            dist[i, j] = sqrt(D[knn[j]])
+        end
+    end
+    
+    return (dist, edge)
 end

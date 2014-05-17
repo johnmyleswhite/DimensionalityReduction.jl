@@ -6,7 +6,8 @@ module DimensionalityReduction
            tsne, 
            isomap, 
            diffusion_maps, 
-           laplacian_eigenmaps
+           laplacian_eigenmaps,
+           lle
     export swiss_roll
 
     include("types.jl")
@@ -18,6 +19,7 @@ module DimensionalityReduction
     include("utils.jl")
     include("isomap.jl")
     include("diffusion_maps.jl")
-    include("laplacian_eigenmaps.jl")    
+    include("laplacian_eigenmaps.jl")
+    include("lle.jl")
     
 end

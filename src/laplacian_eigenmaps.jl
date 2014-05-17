@@ -1,23 +1,32 @@
-using Graphs
+function laplacian_eigenmaps(X::Matrix, d::Int=2, k::Int=12; t::Float64=1.0)    
+    n = size(X, 2)
 
-function laplacian_eigenmaps(X::Matrix, d::Int=2, k::Int=12; t::Float64=1.0)
     # Construct NN graph
-    G, dist = find_nn(X, k)
-    G, dist, cc = find_largest_cc(G,dist)
+    println("Building neighborhood graph...")
+    D, E = find_nn(X, k)
 
+    # Select largest connected component    
+    Dc = spzeros(n,n)
+    for i = 1 : n        
+        jj = E[:, i]
+        Dc[i,jj] = D[:, i]
+    end
+    CC = components(E)
+    C = length(CC) == 1 ? CC[1] : CC[indmax(map(size, CC))]    
+    Dc = Dc[C,C]
+    
     # Compute weights
-    w = exp(-dist.^2/t)
-    W = weight_matrix(G,w)
+    println("Compute weights...")
+    W = exp((-Dc.^2)./t)
     D = diagm(sum(W,2)[:])
     L = D - W
 
-    # Sparse representation    
-    #L = laplacian_matrix_sparse(G,w)
-    #D = spdiagm(diag(L))
-
     # Build eigenmaps
+    println("Compute embedding (solve eigenproblem)...")
     λ, U = eig(L, D)
-    λ = λ[2:(d+1)]
-    Y = U[:,2:(d+1)]
-    return Eigenmap(d, k, λ, Y)
+    idx = sortperm(real(λ))
+    λ = real(λ)[idx[2:(d+1)]]
+    Y = real(U)[:,idx[2:(d+1)]]
+
+    return Eigenmap(d, k, t, C, λ, Y')
 end

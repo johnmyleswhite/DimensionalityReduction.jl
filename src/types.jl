@@ -24,28 +24,42 @@ type TSNE
     Y::Matrix{Float64}
 end
 
+type MDS
+    Y::Matrix{Float64}
+    D::Matrix{Float64}
+    k::Int
+end
+
 type Isomap
     d::Int
     k::Int
-    l::Vector
-    P::Matrix
-    cc::Vector
-    Y::Matrix
-    L::Matrix
+    cc::Vector{Int}
+    λ::Vector{Float64}    
+    Y::Matrix{Float64}    
 end
 
 type Diffmap
     d::Int
     t::Int
-    K::Matrix
-    Y::Matrix
+    K::Matrix{Float64}
+    Y::Matrix{Float64}
 end
 
 type Eigenmap
     d::Int
     k::Int
-    L::Vector
-    Y::Matrix
+    t::Float64
+    cc::Vector{Int}
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
+end
+
+type LLE
+    d::Int
+    k::Int
+    cc::Vector{Int}
+    λ::Vector{Float64}
+    Y::Matrix{Float64}  
 end
 
 function Base.show(io::IO, pc::PCA)
@@ -112,19 +126,10 @@ function Base.show(io::IO, res::Isomap)
     show(io, res.k)
     print(io, "\n\n")
     println(io, "Eigenvalues:")
-    show(io, res.l)
-    print(io, "\n\n")
-    println(io, "Eigenvectors:")
-    show(io, res.P)
-    print(io, "\n\n")
-    println(io, "Connected component:")
-    show(io, res.cc)
+    show(io, res.λ)
     print(io, "\n\n")
     println(io, "Embedding:")
     show(io, res.Y)
-    print(io, "\n\n")
-    println(io, "Laplacian:")
-    show(io, res.L)
 end
 
 function Base.show(io::IO, res::Diffmap)
@@ -148,8 +153,25 @@ function Base.show(io::IO, res::Eigenmap)
     println(io, "NNs:")
     show(io, res.k)
     print(io, "\n\n")
+    println(io, "t:")
+    show(io, res.t)
+    print(io, "\n\n")
     println(io, "Eigenvalues:")
-    show(io, res.L)
+    show(io, res.λ)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
+function Base.show(io::IO, res::LLE)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "NNs:")
+    show(io, res.k)
+    print(io, "\n\n")
+    println(io, "Eigenvalues:")
+    show(io, res.λ)
     print(io, "\n\n")
     println(io, "Embedding:")
     show(io, res.Y)

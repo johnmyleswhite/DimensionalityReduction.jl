@@ -1,8 +1,6 @@
 using DimensionalityReduction
 
-d = 2
-k = 12
-n = 1000
-X = swiss_roll(n)
-I = laplacian_eigenmaps(X,d,k)
-@assert size(I.Y) == (n, d)
+X = swiss_roll()
+I = laplacian_eigenmaps(X)
+@assert size(I.Y, 1) == size(X, 1)-1
+@assert size(I.Y, 2) == size(X, 2)
