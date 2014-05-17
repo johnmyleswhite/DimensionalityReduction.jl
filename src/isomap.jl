@@ -1,4 +1,4 @@
-function isomap(X::Matrix, d::Int=2, k::Int=12)
+function isomap(X::Matrix; d::Int=2, k::Int=12)
     # Construct NN graph
     println("Building neighborhood graph...")
     D, E = find_nn(X, k)
