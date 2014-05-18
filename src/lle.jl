@@ -1,5 +1,3 @@
-using Graphs
-
 function lle(X::Matrix; d::Int=2, k::Int=12)
     n = size(X, 2)
 
