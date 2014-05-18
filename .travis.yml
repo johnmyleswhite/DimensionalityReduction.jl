@@ -1,0 +1,20 @@
+language: cpp
+compiler: 
+    - clang
+notifications:
+    email: false
+env:
+    matrix:         
+        - JULIAVERSION="julianightlies" 
+before_install:
+    - sudo add-apt-repository ppa:staticfloat/julia-deps -y
+    - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
+    - sudo apt-get update -qq -y
+    - sudo apt-get install libpcre3-dev julia -y
+branches:
+  only:    
+    - manifold_learing
+script:
+    - julia -e 'Pkg.init(); run(`ln -s $(pwd()) $(Pkg.dir())/DimensionalityReduction`); Pkg.pin("DimensionalityReduction"); Pkg.resolve()'
+    - julia -e 'using DimensionalityReduction; @assert isdefined(:DimensionalityReduction); @assert typeof(DimensionalityReduction) === Module'
+    - julia runtests.jl
