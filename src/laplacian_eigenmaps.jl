@@ -1,3 +1,7 @@
+# Laplacian Eigenmaps
+# -------------------
+# Laplacian Eigenmaps for Dimensionality Reduction and Data Representation,
+# M. Belkin, P. Niyogi, Neural Computation, June 2003; 15 (6):1373-1396
 function laplacian_eigenmaps{T}(X::AbstractMatrix{T}; d::Int=2, k::Int=12, σ::Float64=1.0)    
     n = size(X, 2)
 

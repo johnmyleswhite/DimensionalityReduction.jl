@@ -1,13 +1,14 @@
 module DimensionalityReduction
     export pca, pcaeig, pcasvd
-    export ica, 
-           nmf, 
-           mds, 
-           tsne, 
-           isomap, 
-           diffusion_maps, 
+    export ica,
+           nmf,
+           mds,
+           tsne,
+           isomap,
+           diffusion_maps,
            laplacian_eigenmaps,
-           lle
+           lle,
+           hlle
     export swiss_roll
 
     include("types.jl")
@@ -21,5 +22,6 @@ module DimensionalityReduction
     include("diffusion_maps.jl")
     include("laplacian_eigenmaps.jl")
     include("lle.jl")
-    
+    include("hlle.jl")
+
 end

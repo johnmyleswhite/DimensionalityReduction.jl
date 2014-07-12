@@ -1,3 +1,7 @@
+# Multi-dimensional Scaling
+# -------------------------
+# Modern Multidimensional Scaling - Theory and Applications
+# Borg, I. & Groenen P., Springer Series in Statistics (1997)
 function mds(D::Matrix, k::Integer)
     n = size(D, 1)
     P = D.^2
@@ -15,7 +19,7 @@ function mds(D::Matrix, k::Integer)
     end
     indices = sortperm(real(L), rev=true)[1:k]
     L = real(L[indices])
-    Z = real(Z[:, indices])    
+    Z = real(Z[:, indices])
     X = Z[:, indices] * diagm(sqrt(L[indices]))
     return MDS(X', D, k)
 end

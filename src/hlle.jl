@@ -1,6 +1,7 @@
-# Hessian Locally-Linear Embedding
-# "Hessian eigenmaps: Locally linear embedding techniques for high-dimensional data",
-# D. Donoho and C. Grimes,  Proc Natl Acad Sci U S A. 2003 May 13; 100(10): 5591–5596
+# Hessian Eigenmapping (HLLE)
+# ---------------------------
+# Hessian eigenmaps: Locally linear embedding techniques for high-dimensional data,
+# D. Donoho and C. Grimes, Proc Natl Acad Sci U S A. 2003 May 13; 100(10): 5591–5596
 function hlle(X::Matrix; d::Int=2, k::Int=12)
 	n = size(X, 2)
 

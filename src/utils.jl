@@ -10,15 +10,15 @@ function combn(v::Vector, n::Int)
 end
 
 # Generate k-nearest neighborhood graph with distances
-function find_nn{T}(X::AbstractMatrix{T}, k::Int=12)    
+function find_nn{T}(X::AbstractMatrix{T}, k::Int=12)
     m, n = size(X)
     r = Array(T, (n, n))
     d = Array(T, k, n)
     e = Array(Int, k, n)
 
-    At_mul_B!(r, X, X)    
+    At_mul_B!(r, X, X)
     sa2 = sum(X.^2, 1)
-    
+
     for j = 1 : n
         for i = 1 : j-1
             @inbounds r[i,j] = r[j,i]
@@ -31,7 +31,7 @@ function find_nn{T}(X::AbstractMatrix{T}, k::Int=12)
         e[:, j] = sortperm(r[:,j])[2:k+1]
         d[:, j] = r[e[:, j],j]
     end
-    
+
     return (d, e)
 end
 
@@ -43,10 +43,10 @@ function components(E::AbstractMatrix{Int})
     queue = Int[]
 
     for v in 1 : n
-        if cmap[v] == 0            
+        if cmap[v] == 0
             # Start BFS with coloring
             c = Int[]
-            push!(queue, v)            
+            push!(queue, v)
             while !isempty(queue)
                 w = shift!(queue)
                 for k in E[:, w]
@@ -54,11 +54,11 @@ function components(E::AbstractMatrix{Int})
                         cmap[k] = 1
                         push!(queue, k)
                     end
-                end                
+                end
                 cmap[w] = 2
                 push!(c, w)
             end
-            # Save component            
+            # Save component
             push!(cc, c)
         end
     end
@@ -83,7 +83,7 @@ function dijkstra{T}(D::AbstractMatrix{T}, E::AbstractMatrix{Int}, src)
                 dist[v] = q[v] = alt
                 path[v] = u
             end
-        end        
+        end
     end
 
     return (path, dist)
@@ -91,7 +91,7 @@ end
 
 # find strongly connected components for directed graph
 function scomponents(E::AbstractMatrix{Int})
-    
+
     function tarjan(v::Int)
         global E, I, index, lowlink, stack, components
         index[v] = I
@@ -113,11 +113,11 @@ function scomponents(E::AbstractMatrix{Int})
             while true
                 w = pop!(stack)
                 push!(component, w)
-                if w == v                    
+                if w == v
                     break
                 end
             end
-            push!(components, component)          
+            push!(components, component)
         end
     end
 
@@ -146,17 +146,17 @@ end
 function swiss_roll(n::Int = 1000, noise::Float64=0.05)
     t = (3 * pi / 2) * (1 .+ 2 * rand(n, 1))
     height = 30 * rand(n, 1)
-    X = [t .* cos(t) height t .* sin(t)] + noise * randn(n, 3)  
-    labels = vec(int(rem(sum([round(t / 2) round(height / 12)], 2), 2))) 
+    X = [t .* cos(t) height t .* sin(t)] + noise * randn(n, 3)
+    labels = vec(int(rem(sum([round(t / 2) round(height / 12)], 2), 2)))
     return X', labels
 end
 
 # Deprecated
 function find_nn_{T}(X::AbstractMatrix{T}, k::Int=12)
-    n, m = size(X)    
+    n, m = size(X)
     dist = Array(T, n, k)
     edge = Array(Int, n, k)
-    
+
     for i = 1 : n
         D = vec(sum((X.-X[i,:]).^2,2))
         knn = sortperm(D)[2:k+1]
@@ -165,6 +165,6 @@ function find_nn_{T}(X::AbstractMatrix{T}, k::Int=12)
             dist[i, j] = sqrt(D[knn[j]])
         end
     end
-    
+
     return (dist, edge)
 end
