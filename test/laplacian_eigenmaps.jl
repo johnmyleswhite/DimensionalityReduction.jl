@@ -1,6 +1,7 @@
 using DimensionalityReduction
+using Base.Test
 
-X = swiss_roll()
+X, L = swiss_roll()
 I = laplacian_eigenmaps(X)
-@assert size(I.Y, 1) == size(X, 1)-1
-@assert size(I.Y, 2) == size(X, 2)
+@test size(I.Y, 1) == size(X, 1)-1
+@test size(I.Y, 2) == size(X, 2)
