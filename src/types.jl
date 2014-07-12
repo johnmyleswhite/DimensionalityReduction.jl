@@ -59,7 +59,14 @@ type LLE
     k::Int
     cc::Vector{Int}
     λ::Vector{Float64}
-    Y::Matrix{Float64}  
+    Y::Matrix{Float64}
+end
+
+type HLLE
+    d::Int
+    k::Int
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
 end
 
 function Base.show(io::IO, pc::PCA)
