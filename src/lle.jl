@@ -6,7 +6,6 @@ function lle(X::Matrix; d::Int=2, k::Int=12)
     n = size(X, 2)
 
     # Construct NN graph
-    println("Building neighborhood graph...")
     D, E = find_nn(X, k)
 
     # Select largest connected component
@@ -26,16 +25,14 @@ function lle(X::Matrix; d::Int=2, k::Int=12)
         X = X[:,c]
     end
 
-
     if k > d
-        println("   [K>D: regularization will be used]")
+        warn("   [K>D: regularization will be used]")
         tol = 1e-5
     else
         tol = 0
     end
 
     # Reconstruct weights
-    println("Solve for reconstruction weights...")
     W = zeros(k, n)
     for i = 1 : n
         Z = X[:, E[:,i]] .- X[:,i]
@@ -46,7 +43,6 @@ function lle(X::Matrix; d::Int=2, k::Int=12)
     end
 
     # Compute embedding
-    println("Compute embedding (solve eigenproblem)...")
     M = eye(n,n) # speye(n,n)
     for i = 1 : n
         w = W[:, i]

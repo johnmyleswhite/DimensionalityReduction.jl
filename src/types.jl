@@ -34,8 +34,8 @@ type Isomap
     d::Int
     k::Int
     cc::Vector{Int}
-    λ::Vector{Float64}    
-    Y::Matrix{Float64}    
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
 end
 
 type Diffmap
@@ -68,6 +68,8 @@ type HLLE
     λ::Vector{Float64}
     Y::Matrix{Float64}
 end
+
+typealias LTSA HLLE
 
 function Base.show(io::IO, pc::PCA)
     println(io, "Rotation:")
