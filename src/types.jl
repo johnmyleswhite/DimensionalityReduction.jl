@@ -24,6 +24,53 @@ type TSNE
     Y::Matrix{Float64}
 end
 
+type MDS
+    Y::Matrix{Float64}
+    D::Matrix{Float64}
+    k::Int
+end
+
+type Isomap
+    d::Int
+    k::Int
+    cc::Vector{Int}
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
+end
+
+type Diffmap
+    d::Int
+    t::Int
+    K::Matrix{Float64}
+    Y::Matrix{Float64}
+end
+
+type Eigenmap
+    d::Int
+    k::Int
+    σ::Float64
+    cc::Vector{Int}
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
+end
+
+type LLE
+    d::Int
+    k::Int
+    cc::Vector{Int}
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
+end
+
+type HLLE
+    d::Int
+    k::Int
+    λ::Vector{Float64}
+    Y::Matrix{Float64}
+end
+
+typealias LTSA HLLE
+
 function Base.show(io::IO, pc::PCA)
     println(io, "Rotation:")
     show(io, pc.rotation)
@@ -79,3 +126,63 @@ function Base.show(io::IO, res::TSNE)
     @printf "t-SNE results\n"
     show(io, res.Y)
 end
+
+function Base.show(io::IO, res::Isomap)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "NNs:")
+    show(io, res.k)
+    print(io, "\n\n")
+    println(io, "Eigenvalues:")
+    show(io, res.λ)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
+function Base.show(io::IO, res::Diffmap)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "Timesteps:")
+    show(io, res.t)
+    print(io, "\n\n")
+    println(io, "Kernel:")
+    show(io, res.K)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
+function Base.show(io::IO, res::Eigenmap)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "NNs:")
+    show(io, res.k)
+    print(io, "\n\n")
+    println(io, "σ:")
+    show(io, res.σ)
+    print(io, "\n\n")
+    println(io, "Eigenvalues:")
+    show(io, res.λ)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
+function Base.show(io::IO, res::LLE)
+    println(io, "Dimensionality:")
+    show(io, res.d)
+    print(io, "\n\n")
+    println(io, "NNs:")
+    show(io, res.k)
+    print(io, "\n\n")
+    println(io, "Eigenvalues:")
+    show(io, res.λ)
+    print(io, "\n\n")
+    println(io, "Embedding:")
+    show(io, res.Y)
+end
+
