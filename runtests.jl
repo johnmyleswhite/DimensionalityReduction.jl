@@ -6,6 +6,7 @@ my_tests = ["test/pca.jl",
             "test/isomap.jl",
             "test/lle.jl",
             "test/hlle.jl",
+            "test/ltsa.jl",
             "test/laplacian_eigenmaps.jl",
             "test/diffusion_maps.jl"]
 

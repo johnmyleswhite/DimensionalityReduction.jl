@@ -8,7 +8,8 @@ module DimensionalityReduction
            diffusion_maps,
            laplacian_eigenmaps,
            lle,
-           hlle
+           hlle,
+           ltsa
     export swiss_roll
 
     include("types.jl")
@@ -23,5 +24,6 @@ module DimensionalityReduction
     include("laplacian_eigenmaps.jl")
     include("lle.jl")
     include("hlle.jl")
+    include("ltsa.jl")
 
 end
